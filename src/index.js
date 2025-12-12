@@ -4,8 +4,38 @@ import * as cheerio from "cheerio";
 import * as fs from "node:fs";
 import * as stream from "stream";
 import { promisify } from "util";
+import colors from "@colors/colors";
 
 const finished = promisify(stream.finished);
+
+console.log("Pamela".bgGreen);
+
+const readSiteMap = () => {
+    const buffer = fs.readFileSync("c:\\Users\\Guillermo Jimenez\\source\\repos\\iRenew\\MacStore\\sitemap.xml");
+    const $ = cheerio.loadBuffer(buffer);
+
+    $("loc").map(async (_, urlSiteMap) => {
+        try {
+            const response = await axios.get($(urlSiteMap).text());
+            if(response.statusText == "OK") {
+                createDirectoriesDownload({
+                    listURLsTarget : getMediaResources({
+                        urlTarget : $(urlSiteMap).text(),
+                        urlToFind : "https://webonline.macstore.mx/img/",
+                        attrsTarget : ["src", "srcset", "href"],
+                    }),
+                    dirName: "irenew"
+                });
+            }
+        } catch(error) {
+            // console.error(error);
+        }
+        
+        
+        
+        
+    });
+}
 
 const downloadResources = async ({ urlResouce, pathToSave }) => {
    
@@ -21,8 +51,6 @@ const downloadResources = async ({ urlResouce, pathToSave }) => {
         console.error('Error downloading the image:', error);
     }
 }
-
-
 
 const createDirectoriesDownload = async ({ listURLsTarget, dirName }) => {
 
@@ -47,14 +75,9 @@ const createDirectoriesDownload = async ({ listURLsTarget, dirName }) => {
             console.error(error.message);
         }
     });
-
 }
 
-const getMediaResources = async ({
-    urlTarget,
-    attrsTarget,
-    urlToFind,
-}) => {
+const getMediaResources = async ({ urlTarget, attrsTarget, urlToFind }) => {
     try {
         const response = await axios.get(urlTarget);
 
@@ -89,13 +112,5 @@ const getMediaResources = async ({
     }
 }
 
-createDirectoriesDownload({
-    listURLsTarget : getMediaResources({
-        urlTarget : "https://www.pexels.com/es-es/",
-        urlToFind : "https://images.pexels.com/photos/",
-        attrsTarget : ["src", "srcset", "href"],
-        
-    }),
-    dirName: "pexels"
-});
 
+readSiteMap();

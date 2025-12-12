@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "exe": "node ./src/index.js"
+    "exe": "node --inspect ./src/index.js"
   },
   "keywords": [
     "Pictures",
@@ -15,6 +15,7 @@
   "author": "baalamboox",
   "license": "ISC",
   "dependencies": {
+    "@colors/colors": "^1.6.0",
     "axios": "^1.13.2",
     "cheerio": "^1.1.2"
   }
